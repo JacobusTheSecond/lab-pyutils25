@@ -24,7 +24,7 @@ def run_conan():
     import subprocess
 
     # Make sure to access to local conan
-    cmd = "-m conans.conan install . -if cmake --build=missing"
+    cmd = "-m conans.conan install . --output-folder=cmake --build=missing"
     subprocess.run([sys.executable, *cmd.split(" ")], check=True)
 
 
