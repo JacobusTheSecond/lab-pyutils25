@@ -21,7 +21,11 @@ implement an effizient optimizer with Python and C++.
 Installation is easy via
 
 ```shell
-pip install cgshop2023-pyutils
+pip install .
+```
+or
+```shell
+pipx install .
 ```
 
 Note that this can take some minutes, because a native core based on CGAL will
