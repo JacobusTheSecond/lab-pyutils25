@@ -16,25 +16,14 @@ https://scikit-build.readthedocs.io/en/latest/usage.html#setup-options
 """
 
 from setuptools import find_packages
-from skbuild import setup
+from skbuild_conan import setup
 import sys
-
-
-def run_conan():
-    import subprocess
-
-    # Make sure to access to local conan
-    cmd = "-m conans.conan install . --output-folder=cmake --build=missing"
-    subprocess.run([sys.executable, *cmd.split(" ")], check=True)
-
 
 def readme():
     # Simply return the README.md as string
     with open("README.md") as file:
         return file.read()
 
-
-run_conan()  # automatically running conan. Ugly workaround, but does its job.
 setup(  # https://scikit-build.readthedocs.io/en/latest/usage.html#setup-options
     # ~~~~~~~~~ BASIC INFORMATION ~~~~~~~~~~~
     name="cgshop2023_pyutils",
@@ -62,35 +51,7 @@ setup(  # https://scikit-build.readthedocs.io/en/latest/usage.html#setup-options
         "networkx>=2.5.1",
         "requests>=2.25.1",
     ],
-    # ~~~~~~~~~~~ CRITICAL CMAKE SETUP ~~~~~~~~~~~~~~~~~~~~~
-    # Especially LTS systems often have very old CMake version (or none at all).
-    # Defining this will automatically install locally a working version.
+    conan_requirements=["fmt/[>=10.0.0]", "cgal/[>=6.0]"],  # C++ Dependencies
+    conan_profile_settings={"compiler.cppstd": 17},
     cmake_minimum_required_version="3.17",
-    #
-    # By default, the `install` target is built (automatically provided).
-    # To compile a specific target, use the following line.
-    # Alternatively, you can use `if(NOT SKBUILD) ... endif()` in CMake, to
-    # remove unneeded parts for packaging (like tests).
-    # cmake_install_target = "install"
-    #
-    # In the cmake you defined by install(...) where to move the built target.
-    # This is critical als only targets with install will be used by skbuild.
-    # This should be relative paths to the project root, as you don't know
-    # where the package will be packaged. You can change the root for the
-    # install-paths with the following line. Note that you can also access
-    # the installation root (including this modification) in cmake via
-    # `CMAKE_INSTALL_PREFIX`. If your package misses some binaries, you
-    # probably messed something up here or in the `install(...)` path.
-    # cmake_install_dir = ".",
-    # |-----------------------------------------------------------------------|
-    # | If you are packing foreign code/bindings, look out if they do install |
-    # | targets in global paths, like /usr/libs/. This could be a problem.    |
-    # |-----------------------------------------------------------------------|
-    #
-    # Some CMake-projects allow you to configure it using parameters. You
-    # can specify them for this Python-package using the following line.
-    # cmake_args=["-DCGALPY_KERNEL_BINDINGS=epec",
-    #             "-DCGALPY_ARRANGEMENT_ON_SURFACE_2_BINDINGS=ON",]
-    #
-    # There are further options, but you should be fine with these above.
 )
